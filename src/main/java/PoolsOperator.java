@@ -182,7 +182,7 @@ public class PoolsOperator {
          }
         
 //        s = "java -jar kgem-0.3.1_new.jar reads.sam_ext.txt -t 0 " +  nClust;
-        s = "java -jar kgem-0.3.1.jar reads.sam_ext.txt -c " +  nClust;
+        s = "java -jar kgem-0.3.1.jar aligned_reads.fas -c " +  nClust;
         p = Runtime.getRuntime().exec(s);
         stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
         while ((s = stdInput.readLine()) != null) {
@@ -205,7 +205,7 @@ public class PoolsOperator {
         f.delete();
         f = new File("reads.sam");
         f.delete();
-        f = new File("reads.sam_ext.txt");
+        f = new File("aligned_reads.fas");
         f.delete();
         f = new File("ref.fas_ext.fasta");
         f.delete();
