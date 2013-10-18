@@ -290,12 +290,13 @@ public class Pool {
         
         PoolsOperator po = new PoolsOperator();        
         FileWriter fw = new FileWriter("union_reads.fas");
+        int id = 1;
         for (Read r : this.ds.reads)
             for (int i = 0; i < r.getFreq(); i++)
-                fw.write(">" + r.name + "_1\n" + r.getNucl() + "\n");
+                fw.write(">" + r.name + id++ + "_1\n" + r.getNucl() + "\n");
         for (Read r : p.ds.reads)
             for (int i = 0; i < r.getFreq(); i++)
-                fw.write(">" + r.name + "_2\n" + r.getNucl() + "\n");
+                fw.write(">" + r.name + id++ + "_2\n" + r.getNucl() + "\n");
         fw.close();
         
         
