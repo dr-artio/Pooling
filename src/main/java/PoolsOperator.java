@@ -207,9 +207,9 @@ public class PoolsOperator {
         f.delete();
         f = new File("aligned_reads.fas");
         f.delete();
-        f = new File("ref.fas_ext.fasta");
-        f.delete();
-        f = new File("trash.fastq");
-        f.delete();
+        //f = new File("ref.fas_ext.fasta");
+        //f.delete();
+        //f = new File("trash.fastq");
+        //f.delete();
     }
 }

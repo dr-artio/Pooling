@@ -70,7 +70,7 @@ public class RunTestIdSamples {
          }*/
          
          
-         Pool inter = pools.get(0).intersectKGEM(pools.get(2));
+         Pool inter = pools.get(1).intersectKGEM(pools.get(3));
          
          String name = "Inter02";
          inter.printToFile(name);         

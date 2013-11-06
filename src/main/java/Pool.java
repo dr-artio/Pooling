@@ -293,10 +293,10 @@ public class Pool {
         int id = 1;
         for (Read r : this.ds.reads)
             for (int i = 0; i < r.getFreq(); i++)
-                fw.write(">" + r.name + id++ + "_1\n" + r.getNucl() + "\n");
+                fw.write(">" + r.name + "_" + id++ + "\n" + r.getNucl() + "\n");
         for (Read r : p.ds.reads)
             for (int i = 0; i < r.getFreq(); i++)
-                fw.write(">" + r.name + id++ + "_2\n" + r.getNucl() + "\n");
+                fw.write(">" + r.name + "_" + id++ + "\n" + r.getNucl() + "\n");
         fw.close();
         
         
@@ -323,14 +323,14 @@ public class Pool {
         }
         
         File fl = new File("reads_clustered.fas");
-        fl.delete();
+        //fl.delete();
         fl = new File("union_reads.fas");
-        fl.delete();
+        //fl.delete();
         
         for (int i = 0; i < union_ds.reads.size(); i++)
             union_ds.reads.get(i).name = "Cluster" + clusters[i];
         
-        union_ds.PrintUniqueReads("Union_reads.fas");
+        union_ds.PrintUniqueReads("Union_reads_u.fas");
         
         
         ArrayList<HashSet<Integer>> clustPools = new ArrayList(k);
