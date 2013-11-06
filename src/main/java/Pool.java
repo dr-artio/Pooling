@@ -306,6 +306,7 @@ public class Pool {
         int[] clusters = new int[union_ds.reads.size()];
         for (int i = 0; i < union_ds.reads.size(); i++)
         {
+            Map<Integer, Integer> indMap = new HashMap<Integer, Integer>();
             double[] haploProb = new double[k];
             StringTokenizer st = new StringTokenizer(union_ds.reads.get(i).name,"_");
 //            System.out.println(union_ds.reads.get(i).name);
@@ -316,6 +317,10 @@ public class Pool {
 //                haploProb[j] = Double.parseDouble(st.nextToken());
 //            }
             int bestHaplo = Integer.parseInt(s1.substring(1));
+            if (!indMap.containsKey(bestHaplo)){
+                indMap.put(bestHaplo, indMap.size());
+            }
+            bestHaplo = indMap.get(bestHaplo);
 //            for (int j = 1; j < k; j++)
 //                if (haploProb[j] > haploProb[bestHaplo])
 //                    bestHaplo = j;
