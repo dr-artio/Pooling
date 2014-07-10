@@ -1,4 +1,9 @@
+package Pooling;
 
+
+import Pooling.EdgeComparator;
+import Pooling.Edge;
+import Pooling.Cut;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -71,9 +76,11 @@ public class Graph {
         }
         
         boolean toIter = true;
+        int itr = 0;
         while (toIter)
         {
-//            System.out.println("Maxcut iteration");
+            itr++;
+            System.out.println("Maxcut iteration " + itr);
             toIter = false;
             
             double record = 0;

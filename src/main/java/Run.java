@@ -1,5 +1,7 @@
+package Pooling;
 
-import errorcorrection.DataSet;
+
+import ErrorCorrection.DataSet;
 import java.io.IOException;
 import java.util.ArrayList;
 

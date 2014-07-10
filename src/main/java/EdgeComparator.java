@@ -1,4 +1,7 @@
+package Pooling;
 
+
+import Pooling.Edge;
 import java.util.Comparator;
 
 /*

@@ -1,7 +1,11 @@
+package Pooling;
+
 /*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
+import Pooling.DoubleGraph;
+import Pooling.Cut;
 import java.io.IOException;
 import java.util.*;
 /**
@@ -227,9 +231,11 @@ public class DoubleGraphProcessor {
                 Stack<Vertex> candLocalOptimums = new Stack();
                 TabuStates tabust = new TabuStates();
 
+                int itr = 0;
                 while (toIter)
                 {
-//                    System.out.println("Improvment of cut iteration");
+                    itr++;
+                    System.out.println("Improvment of cut iteration " + itr + "; tabuN=" + tabuN);
                     toIter = false;
                     int record = 0;
                     Vertex vertRecord = null;
@@ -383,17 +389,42 @@ public class DoubleGraphProcessor {
 //                        toIter = false;
                 }
             }
+           
+             
+            // reduce cuts to feasible size
+            for (int i = 0; i < 2; i++)
+            {
+                while (recordCut[i].part1.size() > g.threshold)
+                {
+                    int record = Integer.MAX_VALUE;
+                    Vertex vertRecord = null;
+                    for (Vertex v : recordCut[i].part1)
+                    {
+                        int deginNonsep = 0;
+                        int degoutNonsep = 0;
+                        if (degoutNonsep - deginNonsep < record)
+                        {
+                            record = degoutNonsep - deginNonsep;
+                            vertRecord = v;
+                        }
+                    }
+                    recordCut[i].part1.remove(vertRecord);
+                    recordCut[i].part2.add(vertRecord);
+                }
+            } 
             
-
-         
+            System.out.println("Finding ecut1");
             ArrayList<Edge> ecut1 = g.cutEdgesNonsep(recordCut[0].part1);
+            System.out.println("Finding ecut2");
             ArrayList<Edge> ecut2 = g.cutEdgesNonsep(recordCut[1].part1);
+            System.out.println("ecuts found");
             
             if ((ecut1.size() == 0)&&(ecut2.size() == 0))
             {
                 tabuN++;
                 continue;
             }
+            
             
             if (ecut1.size() >= ecut2.size())
             {

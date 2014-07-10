@@ -1,3 +1,5 @@
+package Pooling;
+
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -44,11 +46,20 @@ public class TabuState {
             if (this.tabu.size() != ts.tabu.size())
                 return false;
             for (int i = 0; i < this.part.size(); i++)
-                if (this.part.get(i) != ts.part.get(i))
+            {
+                int x = this.part.get(i);
+                int y = ts.part.get(i);
+                if (x != y)
                     return false;
+            }
             for (int i = 0; i < this.tabu.size(); i++)
-                if (this.tabu.get(i) !=ts.tabu.get(i))
+            {
+                int x = this.tabu.get(i);
+                int y = ts.tabu.get(i);
+//                if (this.tabu.get(i) != ts.tabu.get(i))
+                if (x != y)
                     return false;
+            }
             return true;           
     }
 }

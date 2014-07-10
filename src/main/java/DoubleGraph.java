@@ -1,3 +1,5 @@
+package Pooling;
+
 /*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
@@ -7,6 +9,7 @@
  *
  * @author kki8
  */
+import Pooling.Cut;
 import java.util.*;
 import java.io.*;
 
@@ -16,6 +19,7 @@ public class DoubleGraph {
     HashMap<Vertex,HashSet<Vertex>> adjListsNonsep;
     ArrayList<Edge> edgeListNonrel;
     ArrayList<Edge> edgeListNonsep;
+    double threshold;
 
     DoubleGraph(String addr) throws Exception
     {
@@ -169,6 +173,146 @@ public class DoubleGraph {
                     }
             }
     }
+    DoubleGraph(int n, int maxWeight, int gap)
+    {
+        int nVert = n;
+        vertices = new ArrayList(nVert);
+        adjListsNonrel = new HashMap();
+        adjListsNonsep = new HashMap();
+        edgeListNonrel = new ArrayList();
+        edgeListNonsep = new ArrayList();
+        
+        HashMap<Vertex,Integer> weights = new HashMap();
+        
+                
+        for (int i = 0; i < nVert; i++)
+        {
+            Vertex v = new Vertex(i+1);
+            adjListsNonrel.put(v,new HashSet());
+            adjListsNonsep.put(v,new HashSet());  
+            vertices.add(v);
+            int w = (int) (maxWeight*Math.random());
+            weights.put(v, w);
+        }
+
+        for (int i = 0; i < nVert; i++)
+            for (int j = i+1; j < nVert; j++)
+            {
+                    Vertex v = vertices.get(i);
+                    Vertex u = vertices.get(j);
+                    adjListsNonsep.get(v).add(u);
+                    adjListsNonsep.get(u).add(v); 
+                    edgeListNonsep.add(new Edge(v,u));
+                    int x = weights.get(u);
+                    int y = weights.get(v);
+
+                    if (Math.abs(x - y) < gap)
+                    {
+                        adjListsNonrel.get(v).add(u);
+                        adjListsNonrel.get(u).add(v); 
+                        edgeListNonrel.add(new Edge(v,u));
+                    }
+            }
+    }
+    DoubleGraph(int n, double p, double t, boolean ifWeighted)
+    {
+        threshold = t;
+        int nVert = n;
+        vertices = new ArrayList(nVert);
+        adjListsNonrel = new HashMap();
+        adjListsNonsep = new HashMap();
+        edgeListNonrel = new ArrayList();
+        edgeListNonsep = new ArrayList();
+        
+                
+        for (int i = 0; i < nVert; i++)
+        {
+            Vertex v = new Vertex(i+1);
+            adjListsNonrel.put(v,new HashSet());
+            adjListsNonsep.put(v,new HashSet());  
+            vertices.add(v);
+            
+        }
+
+        for (int i = 0; i < nVert; i++)
+            for (int j = i+1; j < nVert; j++)
+            {
+                    Vertex v = vertices.get(i);
+                    Vertex u = vertices.get(j);
+                    adjListsNonsep.get(v).add(u);
+                    adjListsNonsep.get(u).add(v); 
+                    edgeListNonsep.add(new Edge(v,u));
+                    
+                    if (!ifWeighted)
+                    {
+                        double d = Math.random();
+                        if (d <= p)
+                        {
+                            adjListsNonrel.get(v).add(u);
+                            adjListsNonrel.get(u).add(v); 
+                            edgeListNonrel.add(new Edge(v,u,1));
+                        }
+                        else
+                        {
+                            adjListsNonrel.get(v).add(u);
+                            adjListsNonrel.get(u).add(v); 
+                            edgeListNonrel.add(new Edge(v,u,threshold+1));
+                        }
+                    }
+            }
+    }
+    DoubleGraph(int n, int maxWeight, int gap, double t, boolean ifWeighted)
+    {
+        threshold = t;
+        int nVert = n;
+        vertices = new ArrayList(nVert);
+        adjListsNonrel = new HashMap();
+        adjListsNonsep = new HashMap();
+        edgeListNonrel = new ArrayList();
+        edgeListNonsep = new ArrayList();
+        
+        HashMap<Vertex,Integer> weights = new HashMap();        
+                
+        for (int i = 0; i < nVert; i++)
+        {
+            Vertex v = new Vertex(i+1);
+            adjListsNonrel.put(v,new HashSet());
+            adjListsNonsep.put(v,new HashSet());  
+            vertices.add(v);
+            int w = (int) (maxWeight*Math.random());
+            weights.put(v, w);
+            
+        }
+
+        for (int i = 0; i < nVert; i++)
+            for (int j = i+1; j < nVert; j++)
+            {
+                    Vertex v = vertices.get(i);
+                    Vertex u = vertices.get(j);
+                    adjListsNonsep.get(v).add(u);
+                    adjListsNonsep.get(u).add(v); 
+                    edgeListNonsep.add(new Edge(v,u));
+                    
+                    
+                    if (!ifWeighted)
+                    {
+                        int x = weights.get(u);
+                        int y = weights.get(v);
+                        if (Math.abs(x - y) < gap)
+                        {
+                            adjListsNonrel.get(v).add(u);
+                            adjListsNonrel.get(u).add(v); 
+                            edgeListNonrel.add(new Edge(v,u,1));
+                        }
+                        else
+                        {
+                            adjListsNonrel.get(v).add(u);
+                            adjListsNonrel.get(u).add(v); 
+                            edgeListNonrel.add(new Edge(v,u,threshold+1));
+                        }
+                    }
+            }
+    }
     DoubleGraph(ArrayList vertices1, HashMap<Vertex,HashSet<Vertex>> adjListsNonrel1, HashMap<Vertex,HashSet<Vertex>> adjListsNonsep1,ArrayList<Edge> edgeListNonrel1,ArrayList<Edge> edgeListNonsep1)
     {
         vertices = new ArrayList(vertices1);
@@ -184,6 +328,7 @@ public class DoubleGraph {
         this.adjListsNonsep = new HashMap(g.adjListsNonsep);
         this.edgeListNonrel = new ArrayList(g.edgeListNonrel);
         this.edgeListNonsep = new ArrayList(g.edgeListNonsep);
+        threshold = g.threshold;
     }
     void addCrownNonsep()
     {
@@ -476,7 +621,7 @@ public class DoubleGraph {
             System.out.println(v.index);
         System.out.println("Nonrel edges");
         for (Edge e: edgeListNonrel)
-            System.out.println(e.u.index + " " + e.v.index);
+            System.out.println(e.u.index + " " + e.v.index + " " + e.weight);
         System.out.println("Nonsep edges");
         for (Edge e: edgeListNonsep)
             System.out.println(e.u.index + " " + e.v.index);
@@ -637,5 +782,730 @@ public class DoubleGraph {
             }
         return 0.5*this.getNEdgesNonsep()*(w2-w1);
                     
+    }
+    void printProblemLPFormat(String addr) throws IOException
+    {
+        FileWriter fw = new FileWriter(addr);
+        fw.write("minimize\n" );
+        fw.write("\tobj: ");
+        for (int i = 1; i < vertices.size(); i++)
+            fw.write("y" + i + " + ");
+        fw.write("y" + vertices.size() + "\n");
+        fw.write("Subject To\n");
+        for (Edge e: this.edgeListNonsep)
+        {
+            int i = e.u.index;
+            int j = e.v.index;
+            fw.write("\tsep" + i + "_" + j + ": ");
+            for (int k = 1; k <= vertices.size(); k++)
+                fw.write("- z" + i + "_" + k + " - " + "z" + j + "_" + k + " ");
+            fw.write("+ [ ");
+            for (int k = 1; k < vertices.size(); k++)
+                fw.write("2 z" + i + "_" + k + " * z" + j + "_" + k + " + ");
+            fw.write("2 z" + i + "_" + vertices.size() + " * z" + j + "_" + vertices.size() + " ] <= -1\n");
+        }
+        for (int k = 1; k <= vertices.size(); k++)
+        {
+            fw.write("\tclique" + k + ": ");
+            String s = "";
+            for (Edge e : this.edgeListNonrel)
+            {
+                int i = e.u.index;
+                int j = e.v.index;
+                s += "- " + e.weight +  " z" + i + "_" + k + " - " + e.weight + " z" + j + "_" + k + " ";
+            }
+            s+= "+ [ ";
+            for (Edge e : this.edgeListNonrel)
+            {
+                int i = e.u.index;
+                int j = e.v.index;
+                s += e.weight + " z" + i + "_" + k + "^2 + " + e.weight + " z" + j + "_" + k + "^2 + " + 2*e.weight + " z" + i + "_" + k + " * z" + j + "_" + k + " + ";
+            }
+            s = s.substring(0, s.length() - 3);
+            s += " ] <= " + 2*threshold + "\n";
+            fw.write(s);
+        }
+        for (int k = 1; k <= vertices.size(); k++)
+        {
+            fw.write("\ttestexst" + k + ": ");
+            String s = "";
+            for (int i = 1; i <= vertices.size(); i++)
+                s += "z" + i + "_" + k + " + ";
+            s = s.substring(0, s.length()-3);
+            s += " - " + vertices.size() + " y" + k + " <= 0\n";
+            fw.write(s);
+        }
+        fw.write("Binary\n");
+        for (int i = 1; i <= vertices.size(); i++)
+            for (int k = 1; k <= vertices.size(); k++)
+                fw.write("\tz" + i + "_" + k + "\n");
+        for (int k = 1; k <= vertices.size(); k++)
+            fw.write("\ty" + k + "\n");
+        fw.write("End");
+        fw.close();
+    }
+    void printProblemLPFormatQCQP(String addr) throws IOException
+    {
+        FileWriter fw = new FileWriter(addr);
+        fw.write("Minimize\n" );
+        fw.write("\tobj: ");
+        
+        int n = this.vertices.size();
+        
+        String l = "";
+        
+        l += " [ ";
+        for (int k = 1; k <= vertices.size(); k++)
+        {
+            for (Vertex u : vertices)
+            {
+                int i = u.index;
+                int deg = n-1-this.adjListsNonrel.get(u).size();
+                l += n*deg + " z" + i + "_" + k + " ^2 + ";
+            }
+            for (int u = 0; u < vertices.size(); u++)
+                for (int v = u+1; v < vertices.size(); v++)
+                    if (!this.adjListsNonrel.get(vertices.get(u)).contains(vertices.get(v)))
+                    {
+                        int i = vertices.get(u).index;
+                        int j = vertices.get(v).index;
+                         l += 2*n + " z" + i + "_" + k + " * z" + j + "_" + k + " + ";
+                    }
+        }
+         l = l.substring(0, l.length() - 3);
+         l += " ] / 2 ";
+        
+         for (int k = 1; k <= vertices.size(); k++)
+             for (Vertex u : vertices)
+             {
+                        double d = 0.5*n;
+                        int deg = n-1-this.adjListsNonrel.get(u).size();
+                        int i = u.index;
+                        l += "- " + d*deg +  " z" + i + "_" + k + " ";
+             }
+         
+        for (int i = 1; i <= vertices.size(); i++)
+            l += " + y" + i + " ";
+        l += "\n";
+        
+        fw.write(l);
+        
+        fw.write("Subject To\n");
+        for (Edge e: this.edgeListNonsep)
+        {
+            int i = e.u.index;
+            int j = e.v.index;
+            fw.write("\tsep" + i + "_" + j + ": ");
+            for (int k = 1; k <= vertices.size(); k++)
+                fw.write("- z" + i + "_" + k + " - " + "z" + j + "_" + k + " ");
+            fw.write("+ [ ");
+            for (int k = 1; k < vertices.size(); k++)
+                fw.write("2 z" + i + "_" + k + " * z" + j + "_" + k + " + ");
+            fw.write("2 z" + i + "_" + vertices.size() + " * z" + j + "_" + vertices.size() + " ] <= -1\n");
+        }
+        for (int k = 1; k <= vertices.size(); k++)
+        {
+            fw.write("\tcliquesize" + k + ": ");
+            String s = "";
+            for (int i = 1; i <= vertices.size(); i++)
+                s += "z" + i + "_" + k + " + ";
+            s = s.substring(0, s.length()-3);
+            s += " <= " + threshold +  "\n";
+            fw.write(s);
+        }
+        for (int k = 1; k <= vertices.size(); k++)
+        {
+            fw.write("\ttestexst" + k + ": ");
+            String s = "";
+            for (int i = 1; i <= vertices.size(); i++)
+                s += "z" + i + "_" + k + " + ";
+            s = s.substring(0, s.length()-3);
+            s += " - " + vertices.size() + " y" + k + " <= 0\n";
+            fw.write(s);
+        }
+        fw.write("Binary\n");
+        for (int i = 1; i <= vertices.size(); i++)
+            for (int k = 1; k <= vertices.size(); k++)
+                fw.write("\tz" + i + "_" + k + "\n");
+        for (int k = 1; k <= vertices.size(); k++)
+            fw.write("\ty" + k + "\n");
+        fw.write("End");
+        fw.close();
+    }
+     void printProblemLPFormatQP(String addr) throws IOException
+    {
+        FileWriter fw = new FileWriter(addr);
+        fw.write("Minimize\n" );
+        fw.write("\tobj: ");
+        
+        int n = this.vertices.size();
+        
+        String l = "";
+        
+        l += " [ ";
+        for (int k = 1; k <= vertices.size(); k++)
+        {
+            for (Vertex u : vertices)
+            {
+                int i = u.index;
+                int deg = n-1-this.adjListsNonrel.get(u).size();
+                l += n*deg + " z" + i + "_" + k + " ^2 + ";
+            }
+            for (int u = 0; u < vertices.size(); u++)
+                for (int v = u+1; v < vertices.size(); v++)
+                    if (!this.adjListsNonrel.get(vertices.get(u)).contains(vertices.get(v)))
+                    {
+                        int i = vertices.get(u).index;
+                        int j = vertices.get(v).index;
+                         l += 2*n + " z" + i + "_" + k + " * z" + j + "_" + k + " + ";
+                    }
+        }
+         l = l.substring(0, l.length() - 3);
+         l += " ] / 2 ";
+        
+         for (int k = 1; k <= vertices.size(); k++)
+             for (Vertex u : vertices)
+             {
+                        double d = 0.5*n;
+                        int deg = n-1-this.adjListsNonrel.get(u).size();
+                        int i = u.index;
+                        l += "- " + d*deg +  " z" + i + "_" + k + " ";
+             }
+         
+        for (int i = 1; i <= vertices.size(); i++)
+            l += " + y" + i + " ";
+        l += "\n";
+        
+        fw.write(l);
+        
+        fw.write("Subject To\n");
+        for (Edge e: this.edgeListNonsep)
+        {
+            int i = e.u.index;
+            int j = e.v.index;
+            fw.write("\tsep" + i + "_" + j + ": ");
+            for (int k = 1; k <= vertices.size(); k++)
+                fw.write("- t" + i + "_" + j + "_" + k + " ");
+            fw.write("<= -1\n");
+            for (int k = 1; k <= vertices.size(); k++)
+            {
+                fw.write("\taux1_" + i + "_" + j + "_" + k + ": ");
+                fw.write("z" + i + "_" + k + " + z" + j + "_" + k + " + t" + i + "_" + j + "_" + k + " <= 2\n");
+                fw.write("\taux2_" + i + "_" + j + "_" + k + ": ");
+                fw.write("- z" + i + "_" + k + " - z" + j + "_" + k + " + t" + i + "_" + j + "_" + k + " <= 0\n");
+                fw.write("\taux3_" + i + "_" + j + "_" + k + ": ");
+                fw.write("z" + i + "_" + k + " - z" + j + "_" + k + " - t" + i + "_" + j + "_" + k + " <= 0\n");
+                fw.write("\taux4_" + i + "_" + j + "_" + k + ": ");
+                fw.write("- z" + i + "_" + k + " + z" + j + "_" + k + " - t" + i + "_" + j + "_" + k + " <= 0\n");
+            }
+        }
+        for (int k = 1; k <= vertices.size(); k++)
+        {
+            fw.write("\tcliquesize" + k + ": ");
+            String s = "";
+            for (int i = 1; i <= vertices.size(); i++)
+                s += "z" + i + "_" + k + " + ";
+            s = s.substring(0, s.length()-3);
+            s += " <= " + threshold +  "\n";
+            fw.write(s);
+        }
+        for (int k = 1; k <= vertices.size(); k++)
+        {
+            fw.write("\ttestexst" + k + ": ");
+            String s = "";
+            for (int i = 1; i <= vertices.size(); i++)
+                s += "z" + i + "_" + k + " + ";
+            s = s.substring(0, s.length()-3);
+            s += " - " + vertices.size() + " y" + k + " <= 0\n";
+            fw.write(s);
+        }
+ /*       fw.write("General\n");
+        for (Edge e: this.edgeListNonsep)
+        {
+            int i = e.u.index;
+            int j = e.v.index;
+            for (int k = 1; k <= vertices.size(); k++)
+                fw.write("\tt" + i + "_" + j + "_" + k + "\n");
+        }*/
+        fw.write("Binary\n");
+        for (int i = 1; i <= vertices.size(); i++)
+            for (int k = 1; k <= vertices.size(); k++)
+                fw.write("\tz" + i + "_" + k + "\n");
+        for (int k = 1; k <= vertices.size(); k++)
+            fw.write("\ty" + k + "\n");
+        fw.write("End");
+        fw.close();
+    }
+      void printProblemLPFormatQP(String addr, int nPools) throws IOException
+    {
+        FileWriter fw = new FileWriter(addr);
+        fw.write("Minimize\n" );
+        fw.write("\tobj: ");
+        
+        int n = nPools;
+        
+        String l = "";
+        
+        l += " [ ";
+        for (int k = 1; k <= n; k++)
+        {
+            for (Vertex u : vertices)
+            {
+                int i = u.index;
+                int deg = this.vertices.size()-1-this.adjListsNonrel.get(u).size();
+                l += n*deg + " z" + i + "_" + k + " ^2 + ";
+            }
+            for (int u = 0; u < vertices.size(); u++)
+                for (int v = u+1; v < vertices.size(); v++)
+                    if (!this.adjListsNonrel.get(vertices.get(u)).contains(vertices.get(v)))
+                    {
+                        int i = vertices.get(u).index;
+                        int j = vertices.get(v).index;
+                         l += 2*n + " z" + i + "_" + k + " * z" + j + "_" + k + " + ";
+                    }
+        }
+         l = l.substring(0, l.length() - 3);
+         l += " ] / 2 ";
+        
+         for (int k = 1; k <= n; k++)
+             for (Vertex u : vertices)
+             {
+                        double d = 0.5*n;
+                        int deg = this.vertices.size()-1-this.adjListsNonrel.get(u).size();
+                        int i = u.index;
+                        l += "- " + d*deg +  " z" + i + "_" + k + " ";
+             }
+         
+        for (int i = 1; i <= n; i++)
+            l += " + y" + i + " ";
+        l += "\n";
+        
+        fw.write(l);
+        
+        fw.write("Subject To\n");
+        for (Edge e: this.edgeListNonsep)
+        {
+            int i = e.u.index;
+            int j = e.v.index;
+            fw.write("\tsep" + i + "_" + j + ": ");
+            for (int k = 1; k <= n; k++)
+                fw.write("- t" + i + "_" + j + "_" + k + " ");
+            fw.write("<= -1\n");
+            for (int k = 1; k <= n; k++)
+            {
+                fw.write("\taux1_" + i + "_" + j + "_" + k + ": ");
+                fw.write("z" + i + "_" + k + " + z" + j + "_" + k + " + t" + i + "_" + j + "_" + k + " <= 2\n");
+                fw.write("\taux2_" + i + "_" + j + "_" + k + ": ");
+                fw.write("- z" + i + "_" + k + " - z" + j + "_" + k + " + t" + i + "_" + j + "_" + k + " <= 0\n");
+                fw.write("\taux3_" + i + "_" + j + "_" + k + ": ");
+                fw.write("z" + i + "_" + k + " - z" + j + "_" + k + " - t" + i + "_" + j + "_" + k + " <= 0\n");
+                fw.write("\taux4_" + i + "_" + j + "_" + k + ": ");
+                fw.write("- z" + i + "_" + k + " + z" + j + "_" + k + " - t" + i + "_" + j + "_" + k + " <= 0\n");
+            }
+        }
+        for (int k = 1; k <= n; k++)
+        {
+            fw.write("\tcliquesize" + k + ": ");
+            String s = "";
+            for (int i = 1; i <= vertices.size(); i++)
+                s += "z" + i + "_" + k + " + ";
+            s = s.substring(0, s.length()-3);
+            s += " <= " + threshold +  "\n";
+            fw.write(s);
+        }
+        for (int k = 1; k <= n; k++)
+        {
+            fw.write("\ttestexst" + k + ": ");
+            String s = "";
+            for (int i = 1; i <= vertices.size(); i++)
+                s += "z" + i + "_" + k + " + ";
+            s = s.substring(0, s.length()-3);
+            s += " - " + vertices.size() + " y" + k + " <= 0\n";
+            fw.write(s);
+        }
+ /*       fw.write("General\n");
+        for (Edge e: this.edgeListNonsep)
+        {
+            int i = e.u.index;
+            int j = e.v.index;
+            for (int k = 1; k <= vertices.size(); k++)
+                fw.write("\tt" + i + "_" + j + "_" + k + "\n");
+        }*/
+        fw.write("Binary\n");
+        for (int i = 1; i <= vertices.size(); i++)
+            for (int k = 1; k <= n; k++)
+                fw.write("\tz" + i + "_" + k + "\n");
+        for (int k = 1; k <= n; k++)
+            fw.write("\ty" + k + "\n");
+        fw.write("End");
+        fw.close();
+    }
+      void printProblemLPFormatQP(String addr, int nPools, boolean ifGeneral) throws IOException
+    {
+        FileWriter fw = new FileWriter(addr);
+        fw.write("Minimize\n" );
+        fw.write("\tobj: ");
+        
+        int n = nPools;
+        
+        String l = "";
+        
+        l += " [ ";
+        for (int k = 1; k <= n; k++)
+        {
+            for (Vertex u : vertices)
+            {
+                int i = u.index;
+                int deg = this.vertices.size()-1-this.adjListsNonrel.get(u).size();
+                l += n*deg + " z" + i + "_" + k + " ^2 + ";
+            }
+            for (int u = 0; u < vertices.size(); u++)
+                for (int v = u+1; v < vertices.size(); v++)
+                    if (!this.adjListsNonrel.get(vertices.get(u)).contains(vertices.get(v)))
+                    {
+                        int i = vertices.get(u).index;
+                        int j = vertices.get(v).index;
+                         l += 2*n + " z" + i + "_" + k + " * z" + j + "_" + k + " + ";
+                    }
+        }
+         l = l.substring(0, l.length() - 3);
+         l += " ] / 2 ";
+        
+         for (int k = 1; k <= n; k++)
+             for (Vertex u : vertices)
+             {
+                        double d = 0.5*n;
+                        int deg = this.vertices.size()-1-this.adjListsNonrel.get(u).size();
+                        int i = u.index;
+                        l += "- " + d*deg +  " z" + i + "_" + k + " ";
+             }
+         
+        for (int i = 1; i <= n; i++)
+            l += " + y" + i + " ";
+        l += "\n";
+        
+        fw.write(l);
+        
+        fw.write("Subject To\n");
+        for (Edge e: this.edgeListNonsep)
+        {
+            int i = e.u.index;
+            int j = e.v.index;
+            fw.write("\tsep" + i + "_" + j + ": ");
+            for (int k = 1; k <= n; k++)
+                fw.write("- t" + i + "_" + j + "_" + k + " ");
+            fw.write("<= -1\n");
+            for (int k = 1; k <= n; k++)
+            {
+                fw.write("\taux1_" + i + "_" + j + "_" + k + ": ");
+                fw.write("z" + i + "_" + k + " + z" + j + "_" + k + " + t" + i + "_" + j + "_" + k + " <= 2\n");
+                fw.write("\taux2_" + i + "_" + j + "_" + k + ": ");
+                fw.write("- z" + i + "_" + k + " - z" + j + "_" + k + " + t" + i + "_" + j + "_" + k + " <= 0\n");
+                fw.write("\taux3_" + i + "_" + j + "_" + k + ": ");
+                fw.write("z" + i + "_" + k + " - z" + j + "_" + k + " - t" + i + "_" + j + "_" + k + " <= 0\n");
+                fw.write("\taux4_" + i + "_" + j + "_" + k + ": ");
+                fw.write("- z" + i + "_" + k + " + z" + j + "_" + k + " - t" + i + "_" + j + "_" + k + " <= 0\n");
+            }
+        }
+        for (int k = 1; k <= n; k++)
+        {
+            fw.write("\tcliquesize" + k + ": ");
+            String s = "";
+            for (int i = 1; i <= vertices.size(); i++)
+                s += "z" + i + "_" + k + " + ";
+            s = s.substring(0, s.length()-3);
+            s += " <= " + threshold +  "\n";
+            fw.write(s);
+        }
+        for (int k = 1; k <= n; k++)
+        {
+            fw.write("\ttestexst" + k + ": ");
+            String s = "";
+            for (int i = 1; i <= vertices.size(); i++)
+                s += "z" + i + "_" + k + " + ";
+            s = s.substring(0, s.length()-3);
+            s += " - " + vertices.size() + " y" + k + " <= 0\n";
+            fw.write(s);
+        }
+        if (ifGeneral)
+        {
+            fw.write("General\n");
+            for (Edge e: this.edgeListNonsep)
+            {
+                int i = e.u.index;
+                int j = e.v.index;
+                for (int k = 1; k <= n; k++)
+                    fw.write("\tt" + i + "_" + j + "_" + k + "\n");
+            }
+        }
+        fw.write("Binary\n");
+        for (int i = 1; i <= vertices.size(); i++)
+            for (int k = 1; k <= n; k++)
+                fw.write("\tz" + i + "_" + k + "\n");
+        for (int k = 1; k <= n; k++)
+            fw.write("\ty" + k + "\n");
+        fw.write("End");
+        fw.close();
+    }
+       void printProblemLPFormatQPRelaxation(String addr, int nPools, boolean ifGeneral) throws IOException
+    {
+        FileWriter fw = new FileWriter(addr);
+        fw.write("Minimize\n" );
+        fw.write("\tobj: ");
+        
+        int n = nPools;
+        
+        String l = "";
+        
+        l += " [ ";
+        for (int k = 1; k <= n; k++)
+        {
+            for (Vertex u : vertices)
+            {
+                int i = u.index;
+                int deg = this.vertices.size()-1-this.adjListsNonrel.get(u).size();
+                l += n*deg + " z" + i + "_" + k + " ^2 + ";
+            }
+            for (int u = 0; u < vertices.size(); u++)
+                for (int v = u+1; v < vertices.size(); v++)
+                    if (!this.adjListsNonrel.get(vertices.get(u)).contains(vertices.get(v)))
+                    {
+                        int i = vertices.get(u).index;
+                        int j = vertices.get(v).index;
+                         l += 2*n + " z" + i + "_" + k + " * z" + j + "_" + k + " + ";
+                    }
+        }
+         l = l.substring(0, l.length() - 3);
+         l += " ] / 2 ";
+        
+         for (int k = 1; k <= n; k++)
+             for (Vertex u : vertices)
+             {
+                        double d = 0.5*n;
+                        int deg = this.vertices.size()-1-this.adjListsNonrel.get(u).size();
+                        int i = u.index;
+                        l += "- " + d*deg +  " z" + i + "_" + k + " ";
+             }
+         
+        for (int i = 1; i <= n; i++)
+            l += " + y" + i + " ";
+        l += "\n";
+        
+        fw.write(l);
+        
+        fw.write("Subject To\n");
+        for (Edge e: this.edgeListNonsep)
+        {
+            int i = e.u.index;
+            int j = e.v.index;
+            fw.write("\tsep" + i + "_" + j + ": ");
+            for (int k = 1; k <= n; k++)
+                fw.write("- t" + i + "_" + j + "_" + k + " ");
+            fw.write("<= -1\n");
+            for (int k = 1; k <= n; k++)
+            {
+                fw.write("\taux1_" + i + "_" + j + "_" + k + ": ");
+                fw.write("z" + i + "_" + k + " + z" + j + "_" + k + " + t" + i + "_" + j + "_" + k + " <= 2\n");
+                fw.write("\taux2_" + i + "_" + j + "_" + k + ": ");
+                fw.write("- z" + i + "_" + k + " - z" + j + "_" + k + " + t" + i + "_" + j + "_" + k + " <= 0\n");
+                fw.write("\taux3_" + i + "_" + j + "_" + k + ": ");
+                fw.write("z" + i + "_" + k + " - z" + j + "_" + k + " - t" + i + "_" + j + "_" + k + " <= 0\n");
+                fw.write("\taux4_" + i + "_" + j + "_" + k + ": ");
+                fw.write("- z" + i + "_" + k + " + z" + j + "_" + k + " - t" + i + "_" + j + "_" + k + " <= 0\n");
+            }
+        }
+        for (int k = 1; k <= n; k++)
+        {
+            fw.write("\tcliquesize" + k + ": ");
+            String s = "";
+            for (int i = 1; i <= vertices.size(); i++)
+                s += "z" + i + "_" + k + " + ";
+            s = s.substring(0, s.length()-3);
+            s += " <= " + threshold +  "\n";
+            fw.write(s);
+        }
+        for (int k = 1; k <= n; k++)
+        {
+            fw.write("\ttestexst" + k + ": ");
+            String s = "";
+            for (int i = 1; i <= vertices.size(); i++)
+                s += "z" + i + "_" + k + " + ";
+            s = s.substring(0, s.length()-3);
+            s += " - " + vertices.size() + " y" + k + " <= 0\n";
+            fw.write(s);
+        }
+        fw.write("Bounds\n");
+        for (int i = 1; i <= vertices.size(); i++)
+            for (int k = 1; k <= n; k++)
+                fw.write("\t0 <= z" + i + "_" + k + " <=1\n");
+        for (int k = 1; k <= n; k++)
+            fw.write("\t0 <= y" + k + " <=1\n");
+        if (ifGeneral)
+        {
+            fw.write("General\n");
+            for (Edge e: this.edgeListNonsep)
+            {
+                int i = e.u.index;
+                int j = e.v.index;
+                for (int k = 1; k <= n; k++)
+                    fw.write("\tt" + i + "_" + j + "_" + k + "\n");
+            }
+        }
+        fw.write("End");
+        fw.close();
+    }
+     void printProblemLPFormatQCQPRelaxation(String addr, int nPools, boolean ifGeneral) throws IOException
+    {
+        FileWriter fw = new FileWriter(addr);
+        fw.write("Minimize\n" );
+        fw.write("\tobj: ");
+        
+        int n = nPools;
+        
+        String l = "";
+        for (int i = 1; i <= n; i++)
+            l += " y" + i + " + ";
+        l = l.substring(0, l.length()-3);
+        l += "\n";
+        
+        fw.write(l);
+        
+        fw.write("Subject To\n");
+        for (Edge e: this.edgeListNonsep)
+        {
+            int i = e.u.index;
+            int j = e.v.index;
+            fw.write("\tsep" + i + "_" + j + ": ");
+            for (int k = 1; k <= n; k++)
+                fw.write("- 2 z" + i + "_" + k + " - 2 " + "z" + j + "_" + k + " ");
+            fw.write("+ [ ");
+            for (int k = 1; k < n; k++)
+                fw.write("2 z" + i + "_" + k + " * z" + j + "_" + k + " + z" + i + "_" + k + "^2 + z" + j + "_" + k + "^2 + ");
+            fw.write("2 z" + i + "_" + n + " * z" + j + "_" + n + " + z" + i + "_" + n + "^2 + z" + j + "_" + n + "^2  ] <= -1\n");
+        }
+        for (int k = 1; k <= vertices.size(); k++)
+        {
+            fw.write("\tclique" + k + ": ");
+            String s = "";
+            for (Edge e : this.edgeListNonrel)
+            {
+                int i = e.u.index;
+                int j = e.v.index;
+                s += "- " + e.weight +  " z" + i + "_" + k + " - " + e.weight + " z" + j + "_" + k + " ";
+            }
+            s+= "+ [ ";
+            for (Edge e : this.edgeListNonrel)
+            {
+                int i = e.u.index;
+                int j = e.v.index;
+                s += e.weight + " z" + i + "_" + k + "^2 + " + e.weight + " z" + j + "_" + k + "^2 + " + 2*e.weight + " z" + i + "_" + k + " * z" + j + "_" + k + " + ";
+            }
+            s = s.substring(0, s.length() - 3);
+            s += " ] <= " + 2*threshold + "\n";
+            fw.write(s);
+        }
+        for (int k = 1; k <= n; k++)
+        {
+            fw.write("\ttestexst" + k + ": ");
+            String s = "";
+            for (int i = 1; i <= vertices.size(); i++)
+                s += "z" + i + "_" + k + " + ";
+            s = s.substring(0, s.length()-3);
+            s += " - " + vertices.size() + " y" + k + " <= 0\n";
+            fw.write(s);
+        }
+        fw.write("Bounds\n");
+        for (int i = 1; i <= vertices.size(); i++)
+            for (int k = 1; k <= n; k++)
+                fw.write("\t0 <= z" + i + "_" + k + " <=1\n");
+        for (int k = 1; k <= n; k++)
+            fw.write("\t0 <= y" + k + " <=1\n");
+        fw.write("End");
+        fw.close();
+    }
+     void printProblemLPFormatQCQP1(String addr, int nPools, boolean ifGeneral) throws IOException
+    {
+        FileWriter fw = new FileWriter(addr);
+        fw.write("Minimize\n" );
+        fw.write("\tobj: ");
+        
+        int n = nPools;
+        
+        String l = "";
+        for (int i = 1; i <= n; i++)
+            l += " y" + i + " + ";
+        l = l.substring(0, l.length()-3);
+        l += "\n";
+        
+        fw.write(l);
+        
+        fw.write("Subject To\n");
+        for (Edge e: this.edgeListNonsep)
+        {
+            int i = e.u.index;
+            int j = e.v.index;
+            fw.write("\tsep" + i + "_" + j + ": ");
+            for (int k = 1; k <= n; k++)
+                fw.write("- 2 z" + i + "_" + k + " - 2 " + "z" + j + "_" + k + " ");
+            fw.write("+ [ ");
+            for (int k = 1; k < n; k++)
+                fw.write("2 z" + i + "_" + k + " * z" + j + "_" + k + " + z" + i + "_" + k + "^2 + z" + j + "_" + k + "^2 + ");
+            fw.write("2 z" + i + "_" + n + " * z" + j + "_" + n + " + z" + i + "_" + n + "^2 + z" + j + "_" + n + "^2  ] <= -1\n");
+        }
+        for (int k = 1; k <= vertices.size(); k++)
+        {
+            fw.write("\tclique" + k + ": ");
+            String s = "";
+            for (Edge e : this.edgeListNonrel)
+            {
+                int i = e.u.index;
+                int j = e.v.index;
+                s += "- " + e.weight +  " z" + i + "_" + k + " - " + e.weight + " z" + j + "_" + k + " ";
+            }
+            s+= "+ [ ";
+            for (Edge e : this.edgeListNonrel)
+            {
+                int i = e.u.index;
+                int j = e.v.index;
+                s += e.weight + " z" + i + "_" + k + "^2 + " + e.weight + " z" + j + "_" + k + "^2 + " + 2*e.weight + " z" + i + "_" + k + " * z" + j + "_" + k + " + ";
+            }
+            s = s.substring(0, s.length() - 3);
+            s += " ] <= " + 2*threshold + "\n";
+            fw.write(s);
+        }
+        for (int k = 1; k <= n; k++)
+        {
+            fw.write("\ttestexst" + k + ": ");
+            String s = "";
+            for (int i = 1; i <= vertices.size(); i++)
+                s += "z" + i + "_" + k + " + ";
+            s = s.substring(0, s.length()-3);
+            s += " - " + vertices.size() + " y" + k + " <= 0\n";
+            fw.write(s);
+        }
+        fw.write("Binary\n");
+        for (int i = 1; i <= vertices.size(); i++)
+            for (int k = 1; k <= n; k++)
+                fw.write("\tz" + i + "_" + k + "\n");
+        for (int k = 1; k <= n; k++)
+            fw.write("\ty" + k + "\n");
+        fw.write("End");
+        fw.close();
+    }
+    void reduce()
+    {
+        ArrayList<Edge> toRemove = new ArrayList();
+        for (Edge e : this.edgeListNonrel)
+            if (e.weight >= threshold)
+            {
+                toRemove.add(e);
+                this.adjListsNonrel.get(e.u).remove(e.v);
+                this.adjListsNonrel.get(e.v).remove(e.u);
+            }
+        this.edgeListNonrel.removeAll(toRemove);
+    }
+    void setThreshold(double t)
+    {
+        threshold = t;
     }
 }
